@@ -1,0 +1,19 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .launch {
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .launch h2 {
+    margin-top: 0;
+  }
+  
+  .launch p {
+    margin: 5px 0;
+  }
