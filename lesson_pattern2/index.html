@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="featured container">
+        <h2 class="featuredHeader">Fetured Items</h2>
+        <div class="featuredTitle">Shop for items based on what we featured in this week</div>
+
+        <div class="featuredItems">
+
+        </div>
+    </div>
+    </div>
+
+    <h2 class="cartItems"></h2>
+    <div class="add-products__products-list">
+
+    </div>
+
+
+    <script src="catalog.js"></script>
+    <script>
+        'use strict'
+
+        const data = JSON.parse(products);
+
+        // шаблон для загрузки товаров из базы
+        const featuredEls = document.querySelector('.featuredItems');
+
+        data.forEach(data => {
+
+            const featuredEl = document.createElement('div');
+            featuredEl.classList.add('featuredItem');
+            featuredEl.id = data.id;
+            featuredEls.appendChild(featuredEl);
+
+            const featuredImgEl = document.createElement('div');
+            featuredImgEl.classList.add('featuredImg');
+            featuredEl.appendChild(featuredImgEl);
+
+            const featuredImgDarkEl = document.createElement('div');
+            featuredImgDarkEl.classList.add('featuredImgDark');
+            featuredImgEl.appendChild(featuredImgDarkEl);
+
+            const buttonEl = document.createElement('button');
+            buttonEl.classList.add('addToCart');
+            buttonEl.textContent = 'Add to Cart'
+            featuredImgDarkEl.appendChild(buttonEl);
+
+            const imgEl = document.createElement('img');
+            imgEl.src = data.productImage;
+            imgEl.alt = 'photo';
+            featuredImgEl.appendChild(imgEl);
+
+            const featuredDataEl = document.createElement('div');
+            featuredDataEl.classList.add('featuredData');
+            featuredEl.appendChild(featuredDataEl);
+
+            const productTitleEl = document.createElement('p');
+            productTitleEl.classList.add('productTitle');
+            productTitleEl.textContent = data.productTitle;
+            featuredDataEl.appendChild(productTitleEl);
+
+            const productDescriptionEl = document.createElement('p');
+            productDescriptionEl.classList.add('productDescription');
+            productDescriptionEl.textContent = data.productDescription;
+            featuredDataEl.appendChild(productDescriptionEl);
+
+            const productPriceEl = document.createElement('p');
+            productPriceEl.classList.add('productPrice');
+            productPriceEl.textContent = data.productPrice;
+            featuredDataEl.appendChild(productPriceEl);
+
+        });
+
+        // Добавляем обработчик события для кнопок "Add to Cart", собираем элемент и передаем его в функцию addToCart
+        const addToCartButtons = document.querySelectorAll('.addToCart');
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                const cartEl = button.parentElement.parentElement.parentElement;
+                const item = {}
+                item['id'] = cartEl.id;
+                const imgSrc = cartEl.querySelector('img').src.split('/')
+                item['productImage'] = 'images/' + imgSrc[imgSrc.length - 1];
+                item['productName'] = cartEl.querySelector('.productTitle').textContent;
+                item['productDescription'] = cartEl.querySelector('.productDescription').textContent;
+                item['productPrice'] = cartEl.querySelector('.productPrice').textContent;
+                addToCart(item);
+            });
+        });
+
+
+        //создаем массив, в котором будем хранить id товаров в корзине и их количество.
+        let myCart = []
+
+        //Функция добавления товара в корзину
+        function addToCart(item) {
+            // event.preventDefault();  
+            const cartItems = document.querySelector('.cartItems');
+            cartItems.textContent = 'Cart Items'
+            const cartItemList = document.querySelector('.add-products__products-list');
+
+            // если товар есть в myCart, увеличиваем его колисетво, если нет добавляем в myCart и в корзину на сайте
+            if (myCart.find(x => x.id === item.id) !== undefined) {
+                myCart.find(x => x.id === item.id).quantity += 1;
+                (cartItemList.querySelectorAll('.add-product')).forEach(element => {
+                    if (element.id === item.id) {
+                        element.querySelector('.add-product__quantity').textContent = 'Quantity: ' + myCart.find(x => x.id === item.id).quantity;
+                    }
+                });
+            }
+            else {
+                myCart.push({ 'id': item.id, 'quantity': 1 })
+
+                const cartItem = document.createElement('div');
+                cartItem.classList.add('add-product');
+                cartItem.id = item.id;
+                cartItemList.appendChild(cartItem);
+
+                const imgItem = document.createElement('img');
+                imgItem.classList.add('add-product__imag');
+                imgItem.src = item.productImage;
+                imgItem.alt = 'photo';
+                cartItem.appendChild(imgItem);
+
+                const itemInfo = document.createElement('div');
+                itemInfo.classList.add('add-product__info');
+                cartItem.appendChild(itemInfo);
+
+                const butProdClose = document.createElement('button');
+                butProdClose.classList.add('add-product__delete');
+                butProdClose.src = 'images/close.svg';
+                itemInfo.appendChild(butProdClose);
+
+                const butCloseImg = document.createElement('img');
+                butCloseImg.classList.add('butCloseImg');
+                butCloseImg.src = 'images/close.svg';
+                butProdClose.appendChild(butCloseImg);
+
+                const prodName = document.createElement('p');
+                prodName.classList.add('add-product__name');
+                prodName.textContent = item.productName;
+                itemInfo.appendChild(prodName);
+
+                const prodPrice = document.createElement('p');
+                prodPrice.classList.add('add-product__price');
+                prodPrice.textContent = 'Price: ' + item.productPrice;
+                itemInfo.appendChild(prodPrice);
+
+                const prodSize = document.createElement('p');
+                prodSize.classList.add('add-product__size');
+                prodSize.textContent = 'Size: XL';
+                itemInfo.appendChild(prodSize);
+
+                const prodColor = document.createElement('p');
+                prodColor.classList.add('add-product__color');
+                prodColor.textContent = 'Color:';
+                itemInfo.appendChild(prodColor);
+
+                const prodQuantity = document.createElement('p');
+                prodQuantity.classList.add('add-product__quantity');
+                prodQuantity.textContent = 'Quantity: ' + '1';
+                itemInfo.appendChild(prodQuantity);
+            }
+            // Добавляем обработчик события для кнопок "deleteFromCard"
+            const deleteFromCartButtons = document.querySelectorAll('.add-product__delete');
+            deleteFromCartButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    deleteItem(button.parentElement.parentElement);
+                });
+            });
+        }
+
+        // Функция для удаления товара из корзины
+        function deleteItem(event) {
+            myCart = myCart.filter(x => x.id !== event.id);
+            event.remove();
+            console.log(myCart);
+            // проверяем, если корзина пустая - убираем текс контент
+            if (myCart.length === 0) {
+                const cartItems = document.querySelector('.cartItems');
+                cartItems.textContent = ''
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
