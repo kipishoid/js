@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+</head>
+<body>
+    <h1>Отзывы о продуктах</h1>
+    <div id="productList"></div>
+    <a href="index.html">Добавить отзыв</a>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || {};
+            const productList = document.getElementById('productList');
+
+            Object.keys(reviews).forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.classList.add('product');
+
+                const productTitle = document.createElement('h2');
+                productTitle.textContent = product;
+                productDiv.appendChild(productTitle);
+
+                const reviewList = document.createElement('ul');
+                reviews[product].forEach((review, index) => {
+                    const reviewItem = document.createElement('li');
+                    reviewItem.textContent = review;
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Удалить';
+                    deleteButton.addEventListener('click', () => {
+                        reviews[product].splice(index, 1);
+                        if (reviews[product].length === 0) {
+                            delete reviews[product];
+                        }
+                        localStorage.setItem('reviews', JSON.stringify(reviews));
+                        location.reload();
+                    });
+
+                    reviewItem.appendChild(deleteButton);
+                    reviewList.appendChild(reviewItem);
+                });
+
+                productDiv.appendChild(reviewList);
+                productList.appendChild(productDiv);
+            });
+        });
+    </script>
+</body>
+</html>
